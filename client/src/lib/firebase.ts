@@ -2,11 +2,11 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
-};
+  apiKey: "AIzaSyBcTXtIdJrP1C9Ljo5ptDnMy4yLdq-97IU",
+  authDomain: "theme42-site.firebaseapp.com",
+  projectId: "theme42-site",
+  appId: "1:1067013832657:web:18ab3b87d2c1d8a3a0c8e9"
+};};
 
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
