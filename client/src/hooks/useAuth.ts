@@ -3,16 +3,13 @@ import { signInWithPopup, signOut as firebaseSignOut, onAuthStateChanged, User a
 import { auth, googleProvider } from "@/lib/firebase";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import type { User } from "@shared/schema";
-
-interface AuthState {
-  user: User | null;
-  loading: boolean;
-}
 
 export function useAuth() {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   const { data: user } = useQuery<User | null>({
     queryKey: [`/api/users/firebase/${firebaseUser?.uid}`],
@@ -30,8 +27,9 @@ export function useAuth() {
 
   const signIn = async () => {
     try {
+      setLoading(true);
       const result = await signInWithPopup(auth, googleProvider);
-      
+
       // Create user in our backend if they don't exist
       if (result.user) {
         await apiRequest("POST", "/api/users", {
@@ -39,13 +37,41 @@ export function useAuth() {
           name: result.user.displayName || "Anonymous",
           firebaseUid: result.user.uid,
         });
+        toast({
+          title: "Successfully signed in",
+          duration: 3000,
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Auth error:", error);
+      toast({
+        title: "Authentication failed",
+        description: error.message,
+        variant: "destructive",
+        duration: 5000,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const signOut = () => firebaseSignOut(auth);
+  const signOut = async () => {
+    try {
+      await firebaseSignOut(auth);
+      toast({
+        title: "Successfully signed out",
+        duration: 3000,
+      });
+    } catch (error: any) {
+      console.error("Sign out error:", error);
+      toast({
+        title: "Sign out failed",
+        description: error.message,
+        variant: "destructive",
+        duration: 5000,
+      });
+    }
+  };
 
   return {
     user,

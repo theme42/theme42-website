@@ -2,11 +2,11 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { LanguageToggle } from "./LanguageToggle";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/components/AuthProvider";
 
 export function Navigation() {
   const { t } = useTranslation();
-  const { user, signIn, signOut } = useAuth();
+  const { user, signIn, signOut } = useAuthContext();
 
   return (
     <nav className="fixed top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b">
@@ -34,11 +34,11 @@ export function Navigation() {
           <div className="flex items-center gap-4">
             <LanguageToggle />
             {user ? (
-              <Button variant="outline" onClick={signOut}>
+              <Button variant="outline" onClick={() => signOut()}>
                 {t("common.logout")}
               </Button>
             ) : (
-              <Button onClick={signIn}>
+              <Button onClick={() => signIn()}>
                 {t("common.login")}
               </Button>
             )}
